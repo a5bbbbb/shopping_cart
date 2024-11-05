@@ -1,8 +1,8 @@
 package architecture;
 
 public class Controller {
-    private Model model;
-    private View view;
+    private final Model model;
+    private final View view;
 
     public Controller(Model model, View view) {
         this.model = model;
@@ -14,4 +14,3 @@ public class Controller {
         view.displayTotalPrice(price);
     }
 }
-
