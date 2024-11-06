@@ -1,163 +1,144 @@
-# **Shopping Cart Project Documentation**
+# Documentation
 
-## **Overview**
+## Overview
 
-The shopping cart application simulates a simple e-commerce system in Java using various design patterns to demonstrate software architectural principles. This documentation covers the project’s architecture, design patterns, UML structure, and usage instructions.
+This project simulates an e-commerce shopping cart system using various design patterns to implement common features such as item management, cart handling, and payment processing. The system follows the Model-View-Controller (MVC) architecture with an extensive use of design patterns including Factory, Decorator, Adapter, Observer, and Strategy patterns.
 
-### **Architecture**
+## Packages
 
-The project is designed using the **Model-View-Controller (MVC)** architecture pattern to separate the data model (Model), user interface (View), and business logic (Controller). This separation allows for easier testing, maintainability, and flexibility.
+### `architecture`
 
-1. **Model**: Holds the data (e.g., total price of items).
-2. **View**: Displays data to the user.
-3. **Controller**: Handles interactions and updates the Model and View.
+Contains the main MVC components: `CartController`, `ItemController`, and `View`.
 
-### **Implemented Design Patterns**
+- **CartController**: Manages cart-related actions such as creating a cart, adding/removing items, and handling exceptions.
+- **ItemController**: Manages item-related actions, including creating items through the Factory pattern.
+- **View**: Responsible for displaying information to the user, such as items in the cart and error messages.
 
-The project employs multiple design patterns, categorized into creational, structural, and behavioral patterns, enhancing modularity, reusability, and scalability.
+### `model`
 
-## **Design Patterns**
+Contains models for managing carts and items, including interfaces with repositories.
 
-### **1. Creational Patterns**
+- **CartModel**: Manages cart data and interactions with the cart repository.
+- **ItemModel**: Manages item data and interactions with the item repository.
 
-#### **Singleton Pattern**: `CartSingleton`
+### `patterns.behavioral`
 
-- **Purpose**: Ensures there is only one instance of the shopping cart throughout the application.
-- **Usage**: The `CartSingleton` class controls access to a single cart instance, which maintains the total price of items added to it.
-  
-  ```java
-  CartSingleton cart = CartSingleton.getInstance();
-  cart.addToTotal(100); // Adds $100 to the cart
-  ```
+Implements behavioral patterns used within the application.
 
-#### **Factory Pattern**: `ItemFactory`
+- **Cart**: Represents a shopping cart containing items and observers.
+- **CartObserver**: Abstract class for observers monitoring cart changes.
+  - **EmailNotification** and **SMSNotification**: Concrete observers that notify users of cart changes.
+- **PaymentStrategy**: Interface for payment strategies, with implementations:
+  - **CreditCardPayment** and **PayPalPayment**: Concrete classes implementing payment methods.
 
-- **Purpose**: Allows for the creation of different item types without exposing the instantiation logic.
-- **Usage**: The `ItemFactory` class creates item objects (e.g., `Book`, `Electronics`) based on the specified type, which is useful for dynamically adding different item types to the cart.
+### `patterns.creational`
 
-  ```java
-  Item book = ItemFactory.createItem("book");
-  Item electronics = ItemFactory.createItem("electronics");
-  ```
+Implements creational patterns for creating item instances.
 
-### **2. Structural Patterns**
+- **Item**: Abstract class representing items in the cart, with subclasses:
+  - **Book** and **Electronics**: Concrete item types with fixed prices.
+- **ItemFactory**: Factory class for creating specific item types based on a string identifier.
 
-#### **Adapter Pattern**: `PriceAdapter` and `MultiCurrencyAdapter`
+### `patterns.structural`
 
-- **Purpose**: Converts the price of items into different currencies, adapting the interface of item prices for internationalization.
-- **Usage**: The `MultiCurrencyAdapter` converts the price in USD to other currencies like Euros or GBP.
+Implements structural patterns to modify and enhance item functionality.
 
-  ```java
-  MultiCurrencyAdapter adapter = new MultiCurrencyAdapter(book);
-  double priceInEuros = adapter.getPriceInCurrency("euro");
-  ```
+- **ItemDecorator**: Abstract decorator class for adding extra features to items.
+  - **GiftWrapDecorator**: Concrete decorator for adding gift-wrapping with custom messages and styles.
+- **PriceAdapter**: Adapter class for converting item prices into different currencies.
 
-#### **Decorator Pattern**: `ItemDecorator` and `GiftWrapDecorator`
+### `repository`
 
-- **Purpose**: Adds additional functionality (e.g., gift wrapping) to items without altering their structure.
-- **Usage**: `GiftWrapDecorator` decorates an item by adding an additional cost for gift wrapping.
+Contains interfaces and implementations for item and cart repositories.
 
-  ```java
-  Item giftWrappedBook = new GiftWrapDecorator(book);
-  ```
+- **CartRepositoryInterface** and **CartRepository**: Interfaces and classes for managing cart data.
+- **ItemRepositoryInterface** and **ItemRepository**: Interfaces and classes for managing item data.
 
-### **3. Behavioral Patterns**
+### `Main`
 
-#### **Observer Pattern**: `CartObserver`, `EmailNotification`, and `SMSNotification`
+Entry point of the application, demonstrating the usage of various patterns and functionalities.
 
-- **Purpose**: Notifies observers whenever the total price of the cart is updated, useful for sending updates to the user.
-- **Usage**: `CartObserver` is implemented by `EmailNotification` and `SMSNotification` classes to receive notifications of cart updates.
+---
 
-  ```java
-  Cart cart = new Cart();
-  cart.addObserver(new EmailNotification());
-  cart.addObserver(new SMSNotification());
-  cart.addToTotal(50); // Triggers notifications
-  ```
+## Class Summaries
 
-#### **Strategy Pattern**: `PaymentStrategy`, `CreditCardPayment`, `PayPalPayment`, and `DiscountStrategy`
+### `CartController`
 
-- **Purpose**: Provides multiple payment strategies and discount options that can be dynamically chosen at runtime.
-- **Usage**: `CreditCardPayment` and `PayPalPayment` implement the `PaymentStrategy` interface, while `DiscountStrategy` adds various discount methods.
+- **createShoppingCart()**: Creates a new shopping cart.
+- **addItemToShoppingCart(int itemIds, int cartId)**: Adds an item to a specified cart by item and cart IDs.
+- **removeItemFromShoppingCart(int itemIds, int cartId)**: Removes an item from a specified cart by item and cart IDs.
 
-  ```java
-  PaymentStrategy payment = new CreditCardPayment();
-  DiscountStrategy discount = new PercentageDiscount(10); // 10% discount
-  payment.pay(cart.getTotal(), discount);
-  ```
+### `ItemController`
 
-## **Usage Instructions**
+- **createItem(String itemType)**: Creates a new item of the specified type using `ItemFactory`.
 
-1. **Initialize the MVC components** to separate the logic, view, and model.
+### `View`
 
-   ```java
-   Model model = new Model();
-   View view = new View();
-   Controller cartController = new Controller(model, view);
-   ```
+- **displayItemsInCart(int cartId)**: Displays all items in a specified cart.
+- **displayException(Exception e)**: Prints an exception message.
 
-2. **Create items** using the `ItemFactory`.
+### `CartModel` and `ItemModel`
 
-   ```java
-   Item book = ItemFactory.createItem("book");
-   ```
+- **CartModel**: Manages cart interactions with `CartRepository`.
+  - **getCartById(int id)**: Retrieves a cart by ID.
+  - **createShoppingCart()**: Creates a new cart.
+- **ItemModel**: Manages item interactions with `ItemRepository`.
+  - **getItemById(int id)**: Retrieves an item by ID.
+  - **getNewId()**: Generates a new item ID.
+  - **addNewItem(Item item)**: Adds a new item to the repository.
 
-3. **Add items to the cart** and manage the cart instance using `CartSingleton`.
+### `Cart` (patterns.behavioral)
 
-   ```java
-   CartSingleton cart = CartSingleton.getInstance();
-   cart.addToTotal(book.getPrice());
-   ```
+- **addItem(Item item)**: Adds an item to the cart.
+- **removeItem(Item item)**: Removes an item from the cart.
+- **addObserver(CartObserver obs)**: Adds an observer to the cart.
+- **removeObserver(CartObserver obs)**: Removes an observer from the cart.
+- **notifyObservers()**: Notifies all observers of changes in the cart.
 
-4. **Convert prices to different currencies** if needed.
+### `CartObserver` (Abstract) and Subclasses
 
-   ```java
-   MultiCurrencyAdapter adapter = new MultiCurrencyAdapter(book);
-   double priceInGBP = adapter.getPriceInCurrency("gbp");
-   ```
+- **CartObserver**: Abstract observer class with `update()` method for observing cart changes.
+  - **EmailNotification** and **SMSNotification**: Concrete observers that send notifications to users.
 
-5. **Add gift wrapping** or other decoration to items using `ItemDecorator`.
+### `PaymentStrategy` (Interface) and Implementations
 
-   ```java
-   Item giftWrappedBook = new GiftWrapDecorator(book);
-   ```
+- **pay(double amount)**: Method to process payments.
+  - **CreditCardPayment** and **PayPalPayment**: Implementations for payment processing strategies.
 
-6. **Set up notifications** for the cart using `CartObserver`.
+### `Item` (Abstract) and Subclasses
 
-   ```java
-   Cart cart = new Cart();
-   cart.addObserver(new EmailNotification());
-   ```
+- **Item**: Abstract class for items, with `getPrice()` method.
+  - **Book** and **Electronics**: Concrete item types with fixed prices.
 
-7. **Choose a payment strategy and apply discounts** if applicable.
+### `ItemFactory`
 
-   ```java
-   PaymentStrategy payment = new CreditCardPayment();
-   DiscountStrategy discount = new PercentageDiscount(15); // 15% discount
-   payment.pay(cart.getTotal(), discount);
-   ```
+- **createItem(String type, int id)**: Creates items based on the specified type (e.g., "book" or "electronics").
 
-## **Assumptions and Limitations**
+### `GiftWrapDecorator` and `ItemDecorator`
 
-- **Assumptions**:
-  - Only two item types (`Book` and `Electronics`) are defined, but more can be added.
-  - The system assumes users can use only one currency conversion at a time.
-  - Discount is applied at the time of payment, not during item addition.
+- **ItemDecorator**: Abstract decorator class that adds features to `Item`.
+- **GiftWrapDecorator**: Concrete decorator for adding gift-wrapping options, message, and wrapping style.
 
-- **Limitations**:
-  - Multi-currency support is limited to USD, Euro, and GBP.
-  - The notification system doesn’t differentiate between email and SMS messages; all notifications are triggered on every update.
+### `PriceAdapter`
 
-## **Future Enhancements**
+- **getPriceInCurrency(String currency)**: Converts the item's price to a specified currency.
+- **displayConvertedPrice(String currency)**: Prints the converted price in a specified currency.
 
-1. **Additional Item Types**: Expand the `ItemFactory` to create more types of items.
-2. **Enhanced Currency Conversion**: Integrate real-time exchange rates for better currency conversions.
-3. **User-Specific Notifications**: Customize notifications based on user preferences.
-4. **More Discount Types**: Add more complex discounting logic, like tiered discounts or membership-based discounts.
-5. **Enhanced Payment Methods**: Include additional payment strategies (e.g., cryptocurrency or mobile payments).
+### `CartRepository` and `ItemRepository`
 
-## **UML Diagram**
+- **CartRepository**: Manages a list of carts and provides methods for cart retrieval and creation.
+- **ItemRepository**: Manages a list of items and provides methods for item retrieval and ID generation.
 
-The UML diagram provides an overview of the system structure and how different classes interact. Each pattern and relationship is illustrated to show inheritance, composition, and dependency relationships among the classes.
+---
 
-![Screenshot 2024-11-05 153304](https://github.com/user-attachments/assets/00621479-0b19-46db-a177-69ddf9cfc85d)
+## Execution (Main Class)
+
+- **MVC Initialization**: Initializes `CartController`, `ItemController`, and `View` instances.
+- **Factory Pattern**: Demonstrates item creation using `ItemFactory`.
+- **Decorator Pattern**: Adds gift-wrapping customization to an item.
+- **Adapter Pattern**: Converts and displays item prices in multiple currencies.
+- **Observer Pattern**: Adds observers to a cart and notifies them of changes.
+- **Strategy Pattern**: Demonstrates payment processing with different strategies.
+
+## UML 
+
