@@ -2,6 +2,9 @@ import patterns.creational.*;
 import patterns.structural.*;
 import patterns.behavioral.*;
 import architecture.*;
+import patterns.behavioral.EmailNotification;
+import patterns.behavioral.SMSNotification;
+import patterns.behavioral.PercentageDiscount;
 
 public class Main {
     public static void main(String[] args) {
@@ -17,23 +20,44 @@ public class Main {
         Item book = ItemFactory.createItem("book");
         Item electronics = ItemFactory.createItem("electronics");
 
-        // Decorator Pattern - Add gift wrap
-        Item giftWrappedBook = new GiftWrapDecorator(book);
+        // Decorator Pattern - Add gift wrap with customizations
+        GiftWrapDecorator giftWrappedBook = new GiftWrapDecorator(book, "premium", "Happy Birthday!");
+        giftWrappedBook.showGiftDetails(); // Display gift wrap details including style and message
 
-        // Adapter Pattern - Convert price to Euros
-        PriceAdapter euroAdapter = new PriceAdapter(electronics);
-        System.out.println("Price in Euros: €" + euroAdapter.getPriceInEuros());
+        // Apply a seasonal discount on the wrapped item
+        double discountedPrice = giftWrappedBook.applySeasonalDiscount(10); // Applying a 10% seasonal discount
+        System.out.println("Discounted Price after seasonal discount: $" + discountedPrice);
 
-        // Observer Pattern
-        CartObserver observer = new Cart();
-        cart.addToTotal(book.getPrice());
-        cart.addToTotal(electronics.getPrice());
-        observer.update(cart.getTotal());
+        // Adapter Pattern - Convert and display price in multiple currencies
+        PriceAdapter priceAdapter = new PriceAdapter(electronics);
+        priceAdapter.displayConvertedPrice("EURO");
+        priceAdapter.displayConvertedPrice("GBP");
+        priceAdapter.displayConvertedPrice("YEN");
 
-        // Strategy Pattern - Select payment method
-        PaymentStrategy payment = new CreditCardPayment();
-        payment.pay(cart.getTotal());
+        // Observer Pattern - Set up observers for cart notifications
+        Cart cartWithObservers = new Cart();
+        CartObserver emailNotification = new EmailNotification();
+        CartObserver smsNotification = new SMSNotification();
+        cartWithObservers.addObserver(emailNotification);
+        cartWithObservers.addObserver(smsNotification);
 
+        // Add items to the cart and notify observers
+        if (book != null) {
+            cart.addToTotal(book.getPrice());
+        }
+        cartWithObservers.notifyObservers(cart.getTotal()); // Notify after adding book
+
+        if (electronics != null) {
+            cart.addToTotal(electronics.getPrice());
+        }
+        cartWithObservers.notifyObservers(cart.getTotal()); // Notify after adding electronics
+
+        // Strategy Pattern - Use PayPalPayment with PercentageDiscount
+        PaymentStrategy payment = new PayPalPayment();
+        DiscountStrategy discount = new PercentageDiscount(15); // Applying a 15% discount for the payment
+        payment.pay(cart.getTotal(), discount); // Pay using PayPal with discount
+
+        // Update the MVC controller to reflect the final total
         controller.updateTotalPrice(cart.getTotal());
     }
 }
