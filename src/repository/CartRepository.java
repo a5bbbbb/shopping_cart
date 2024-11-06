@@ -2,11 +2,16 @@ package repository;
 
 import patterns.behavioral.Cart;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CartRepository implements CartRepositoryInterface {
     private List<Cart> cartList;
     private int idCounter = 0;
+
+    public CartRepository() {
+        this.cartList = new ArrayList<>();
+    }
 
     public Cart getCartById(int id) throws Exception {
         for (Cart cart : cartList) {

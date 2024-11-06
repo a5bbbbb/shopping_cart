@@ -39,25 +39,24 @@ public class Main {
         priceAdapter.displayConvertedPrice("YEN");
 
         // Observer Pattern - Set up observers for cart notifications
-        Cart cartWithObservers = cartModel.createShoppingCart();
+        int cartId = cartController.createShoppingCart();
         CartObserver emailNotification = new EmailNotification("Zhannur");
         CartObserver smsNotification = new SMSNotification("Alan");
-        cartWithObservers.addObserver(emailNotification);
-        cartWithObservers.addObserver(smsNotification);
+        cartModel.getCartById(cartId).addObserver(emailNotification);
+        cartModel.getCartById(cartId).addObserver(smsNotification);
 
         // Add items to the cart and notify observers
-        int cartId = cartWithObservers.getId();
-        cartWithObservers.addItem(giftWrappedBook);
-        cartWithObservers.notifyObservers();
-        view.displayItemsInCart(cartWithObservers.getId());
+        cartModel.getCartById(cartId).addItem(giftWrappedBook);
+        cartModel.getCartById(cartId).notifyObservers();
+        view.displayItemsInCart(cartModel.getCartById(cartId).getId());
 
-        cartWithObservers.addItem(itemModel.getItemById(electronicsId));
-        cartWithObservers.notifyObservers();
-        view.displayItemsInCart(cartWithObservers.getId());
+        cartModel.getCartById(cartId).addItem(itemModel.getItemById(electronicsId));
+        cartModel.getCartById(cartId).notifyObservers();
+        view.displayItemsInCart(cartModel.getCartById(cartId).getId());
 
         // Strategy Pattern - Use PayPalPayment with PercentageDiscount
         PaymentStrategy payment = new PayPalPayment();
-        payment.pay(cartWithObservers.getCartPrice());
+        payment.pay(cartModel.getCartById(cartId).getCartPrice());
 
     }
 }

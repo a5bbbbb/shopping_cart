@@ -2,11 +2,16 @@ package repository;
 
 import patterns.creational.Item;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ItemRepository implements ItemRepositoryInterface{
     private List<Item> itemList;
-    private int idCounter;
+    private int idCounter = 0;
+
+    public ItemRepository() {
+        this.itemList = new ArrayList<>();
+    }
 
     @Override
     public Item getItemById(int id) throws Exception{
