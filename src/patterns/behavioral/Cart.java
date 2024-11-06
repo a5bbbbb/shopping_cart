@@ -3,10 +3,11 @@ package patterns.behavioral;
 import patterns.creational.Item;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Cart{
+public class Cart implements Iterable<Item>{
     private List<Item> itemList;
     private List<CartObserver> observers;
     private int id;
@@ -53,5 +54,9 @@ public class Cart{
     public void notifyObservers(){
         for (CartObserver obs : observers)
             obs.update(this);
+    }
+
+    public Iterator<Item> iterator(){
+        return itemList.iterator();
     }
 }

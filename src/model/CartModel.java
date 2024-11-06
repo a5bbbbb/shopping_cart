@@ -15,11 +15,6 @@ public class CartModel {
         return repo.getCartById(id);
     }
 
-//    public void addItems(Cart cart, Iterable<Item> items){
-//        for(Item item : items)
-//            cart.addItem(item);
-//    }
-
     public Cart createShoppingCart(){
         return repo.createCart();
     }
