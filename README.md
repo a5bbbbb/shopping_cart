@@ -141,4 +141,5 @@ Entry point of the application, demonstrating the usage of various patterns and 
 - **Strategy Pattern**: Demonstrates payment processing with different strategies.
 
 ## UML 
+![image](https://github.com/user-attachments/assets/d9d0875e-4f9e-40d3-a154-51c2ab67433e)
 
