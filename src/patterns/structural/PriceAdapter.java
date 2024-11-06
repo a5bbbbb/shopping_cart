@@ -3,8 +3,6 @@ import patterns.creational.Item;
 
 public class PriceAdapter {
     private final Item item;
-
-    // Currency conversion rates (example rates, could be fetched dynamically)
     private static final double USD_TO_EURO = 0.85;
     private static final double USD_TO_GBP = 0.75;
     private static final double USD_TO_YEN = 110.0;
@@ -18,7 +16,7 @@ public class PriceAdapter {
             case "EURO" -> item.getPrice() * USD_TO_EURO;
             case "GBP" -> item.getPrice() * USD_TO_GBP;
             case "YEN" -> item.getPrice() * USD_TO_YEN;
-            default -> item.getPrice(); // Default to USD
+            default -> -1;
         };
     }
 

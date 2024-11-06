@@ -93,7 +93,7 @@ The project employs multiple design patterns, categorized into creational, struc
    ```java
    Model model = new Model();
    View view = new View();
-   Controller controller = new Controller(model, view);
+   Controller cartController = new Controller(model, view);
    ```
 
 2. **Create items** using the `ItemFactory`.

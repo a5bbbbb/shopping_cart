@@ -1,8 +1,14 @@
 package patterns.behavioral;
 
-public class EmailNotification implements CartObserver {
+public class EmailNotification extends CartObserver {
+    public EmailNotification(String name) {
+        super(name);
+    }
+
     @Override
-    public void update(double total) {
-        System.out.println("Email Notification: Your cart total is now $" + total);
+    public void update(Cart cart) {
+        System.out.println(
+                "Email Notification: Your cart with id= " + cart.getId() +
+                " has changed. Its total is now $" + cart.getCartPrice());
     }
 }
